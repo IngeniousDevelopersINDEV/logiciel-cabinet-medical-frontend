@@ -4,10 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConsultationService } from '../consultation.service';
 import { PatientService } from '../../patients/patient.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { Patient } from '../../../models/patient.model';
+import { Patient, PagedResponse } from '../../../models/patient.model';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-consultation-form',
@@ -206,17 +206,15 @@ export class ConsultationFormComponent implements OnInit, OnDestroy {
   }
 
   setupPatientAutocomplete(): void {
-    this.patientService.getAll({ size: 20 }).subscribe({
-      next: (r) => this.filteredPatients = r.content || [],
-      error: () => this.notification.error('Impossible de charger la liste des patients')
-    });
-
     this.patientSearchControl.valueChanges.pipe(
+      startWith(''),
       debounceTime(300),
       distinctUntilChanged(),
       switchMap(value => {
         const query = typeof value === 'string' ? value : '';
-        return this.patientService.getAll({ search: query, size: 20 });
+        return this.patientService.getAll({ search: query, size: 20 }).pipe(
+          catchError(() => of<PagedResponse<Patient>>({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 }))
+        );
       }),
       takeUntil(this.destroy$)
     ).subscribe(r => {
