@@ -1,0 +1,72 @@
+{
+  "APP_TITLE": "Cabinet Médical",
+  "MENU": {
+    "DASHBOARD": "Tableau de bord",
+    "PATIENTS": "Patients",
+    "CONSULTATIONS": "Consultations",
+    "PRESCRIPTIONS": "Prescriptions",
+    "APPOINTMENTS": "Rendez-vous",
+    "REPORTS": "Rapports",
+    "USERS": "Utilisateurs"
+  },
+  "AUTH": {
+    "LOGIN": "Connexion",
+    "LOGOUT": "Déconnexion",
+    "REGISTER": "Inscription",
+    "EMAIL": "Email",
+    "PASSWORD": "Mot de passe",
+    "CONFIRM_PASSWORD": "Confirmer le mot de passe"
+  },
+  "COMMON": {
+    "SAVE": "Enregistrer",
+    "CANCEL": "Annuler",
+    "DELETE": "Supprimer",
+    "EDIT": "Modifier",
+    "ADD": "Ajouter",
+    "SEARCH": "Rechercher",
+    "LOADING": "Chargement...",
+    "CONFIRM": "Confirmer",
+    "BACK": "Retour",
+    "ACTIONS": "Actions",
+    "STATUS": "Statut",
+    "DATE": "Date",
+    "ACTIVE": "Actif",
+    "INACTIVE": "Inactif"
+  },
+  "PATIENT": {
+    "TITLE": "Patient",
+    "FIRST_NAME": "Prénom",
+    "LAST_NAME": "Nom",
+    "BIRTH_DATE": "Date de naissance",
+    "GENDER": "Sexe",
+    "PHONE": "Téléphone",
+    "EMAIL": "Email",
+    "ADDRESS": "Adresse",
+    "BLOOD_GROUP": "Groupe sanguin",
+    "ALLERGIES": "Allergies",
+    "MEDICAL_HISTORY": "Antécédents médicaux"
+  },
+  "CONSULTATION": {
+    "TITLE": "Consultation",
+    "REASON": "Motif",
+    "SYMPTOMS": "Symptômes",
+    "DIAGNOSIS": "Diagnostic",
+    "TREATMENT": "Traitement",
+    "NOTES": "Notes"
+  },
+  "PRESCRIPTION": {
+    "TITLE": "Prescription",
+    "MEDICATION": "Médicament",
+    "DOSAGE": "Dosage",
+    "FREQUENCY": "Fréquence",
+    "DURATION": "Durée",
+    "INSTRUCTIONS": "Instructions"
+  },
+  "APPOINTMENT": {
+    "TITLE": "Rendez-vous",
+    "DATE_TIME": "Date & Heure",
+    "DURATION": "Durée",
+    "TYPE": "Type",
+    "ROOM": "Salle"
+  }
+}
