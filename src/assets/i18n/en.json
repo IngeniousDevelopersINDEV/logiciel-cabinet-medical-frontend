@@ -1,0 +1,72 @@
+{
+  "APP_TITLE": "Medical Cabinet",
+  "MENU": {
+    "DASHBOARD": "Dashboard",
+    "PATIENTS": "Patients",
+    "CONSULTATIONS": "Consultations",
+    "PRESCRIPTIONS": "Prescriptions",
+    "APPOINTMENTS": "Appointments",
+    "REPORTS": "Reports",
+    "USERS": "Users"
+  },
+  "AUTH": {
+    "LOGIN": "Login",
+    "LOGOUT": "Logout",
+    "REGISTER": "Register",
+    "EMAIL": "Email",
+    "PASSWORD": "Password",
+    "CONFIRM_PASSWORD": "Confirm Password"
+  },
+  "COMMON": {
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "DELETE": "Delete",
+    "EDIT": "Edit",
+    "ADD": "Add",
+    "SEARCH": "Search",
+    "LOADING": "Loading...",
+    "CONFIRM": "Confirm",
+    "BACK": "Back",
+    "ACTIONS": "Actions",
+    "STATUS": "Status",
+    "DATE": "Date",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive"
+  },
+  "PATIENT": {
+    "TITLE": "Patient",
+    "FIRST_NAME": "First Name",
+    "LAST_NAME": "Last Name",
+    "BIRTH_DATE": "Date of Birth",
+    "GENDER": "Gender",
+    "PHONE": "Phone",
+    "EMAIL": "Email",
+    "ADDRESS": "Address",
+    "BLOOD_GROUP": "Blood Group",
+    "ALLERGIES": "Allergies",
+    "MEDICAL_HISTORY": "Medical History"
+  },
+  "CONSULTATION": {
+    "TITLE": "Consultation",
+    "REASON": "Reason",
+    "SYMPTOMS": "Symptoms",
+    "DIAGNOSIS": "Diagnosis",
+    "TREATMENT": "Treatment",
+    "NOTES": "Notes"
+  },
+  "PRESCRIPTION": {
+    "TITLE": "Prescription",
+    "MEDICATION": "Medication",
+    "DOSAGE": "Dosage",
+    "FREQUENCY": "Frequency",
+    "DURATION": "Duration",
+    "INSTRUCTIONS": "Instructions"
+  },
+  "APPOINTMENT": {
+    "TITLE": "Appointment",
+    "DATE_TIME": "Date & Time",
+    "DURATION": "Duration",
+    "TYPE": "Type",
+    "ROOM": "Room"
+  }
+}
