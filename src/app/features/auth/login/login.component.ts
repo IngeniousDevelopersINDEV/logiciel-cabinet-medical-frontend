@@ -3,6 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { environment } from '../../../../environments/environment';
+
+interface DemoAccount {
+  label: string;
+  email: string;
+  password: string;
+  icon: string;
+}
 
 @Component({
   selector: 'app-login',
@@ -63,6 +71,22 @@ import { NotificationService } from '../../../core/services/notification.service
             <a routerLink="/auth/register">S'inscrire</a>
           </p>
         </mat-card-actions>
+
+        <mat-divider *ngIf="demoAccounts.length > 0"></mat-divider>
+
+        <mat-card-content class="demo-section" *ngIf="demoAccounts.length > 0">
+          <p class="demo-title">Comptes de démonstration</p>
+          <div class="demo-accounts">
+            <button mat-stroked-button *ngFor="let account of demoAccounts"
+                    type="button"
+                    class="demo-btn"
+                    [title]="account.email"
+                    (click)="fillDemoCredentials(account)">
+              <mat-icon>{{ account.icon }}</mat-icon>
+              {{ account.label }}
+            </button>
+          </div>
+        </mat-card-content>
       </mat-card>
     </div>
   `,
@@ -138,6 +162,37 @@ import { NotificationService } from '../../../core/services/notification.service
         font-weight: 500;
       }
     }
+
+    .demo-section {
+      padding: 12px 24px 16px;
+    }
+
+    .demo-title {
+      color: #757575;
+      font-size: 0.8rem;
+      text-align: center;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .demo-accounts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .demo-btn {
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      mat-icon {
+        font-size: 16px;
+        height: 16px;
+        width: 16px;
+      }
+    }
   `]
 })
 export class LoginComponent implements OnInit {
@@ -145,6 +200,8 @@ export class LoginComponent implements OnInit {
   isLoading = false;
   showPassword = false;
   returnUrl = '/dashboard';
+
+  readonly demoAccounts: DemoAccount[] = environment.demoAccounts;
 
   constructor(
     private fb: FormBuilder,
@@ -165,6 +222,10 @@ export class LoginComponent implements OnInit {
     if (this.authService.isAuthenticated) {
       this.router.navigate([this.returnUrl]);
     }
+  }
+
+  fillDemoCredentials(account: DemoAccount): void {
+    this.loginForm.patchValue({ email: account.email, password: account.password });
   }
 
   onSubmit(): void {
