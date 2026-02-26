@@ -4,5 +4,6 @@ export const environment = {
   jwtTokenKey: 'auth_token',
   jwtRefreshTokenKey: 'refresh_token',
   tokenExpirationTime: 3600000,
-  sessionTimeout: 1800000
+  sessionTimeout: 1800000,
+  demoAccounts: [] as { label: string; email: string; password: string; icon: string }[]
 };
