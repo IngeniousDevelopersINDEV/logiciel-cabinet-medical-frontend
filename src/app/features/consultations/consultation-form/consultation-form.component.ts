@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConsultationService } from '../consultation.service';
 import { PatientService } from '../../patients/patient.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Patient } from '../../../models/patient.model';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-consultation-form',
@@ -25,11 +28,16 @@ import { Patient } from '../../../models/patient.model';
             <div class="form-grid">
               <mat-form-field appearance="outline">
                 <mat-label>Patient *</mat-label>
-                <mat-select formControlName="patientId">
-                  <mat-option *ngFor="let p of patients" [value]="p.id">
+                <input matInput [formControl]="patientSearchControl"
+                       [matAutocomplete]="patientAuto"
+                       placeholder="Rechercher un patient...">
+                <mat-autocomplete #patientAuto="matAutocomplete"
+                                  [displayWith]="displayPatient"
+                                  (optionSelected)="onPatientSelected($event)">
+                  <mat-option *ngFor="let p of filteredPatients" [value]="p">
                     {{ p.prenom }} {{ p.nom }}
                   </mat-option>
-                </mat-select>
+                </mat-autocomplete>
                 <mat-error *ngIf="consultationForm.get('patientId')?.hasError('required')">
                   Le patient est requis
                 </mat-error>
@@ -40,6 +48,7 @@ import { Patient } from '../../../models/patient.model';
                 <input matInput [matDatepicker]="picker" formControlName="dateConsultation">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
+                <mat-hint>JJ/MM/AAAA</mat-hint>
                 <mat-error *ngIf="consultationForm.get('dateConsultation')?.hasError('required')">
                   La date est requise
                 </mat-error>
@@ -160,13 +169,15 @@ import { Patient } from '../../../models/patient.model';
     .loading-state { display: flex; justify-content: center; padding: 64px; }
   `]
 })
-export class ConsultationFormComponent implements OnInit {
+export class ConsultationFormComponent implements OnInit, OnDestroy {
   consultationForm!: FormGroup;
+  patientSearchControl = new FormControl<Patient | string>('');
+  filteredPatients: Patient[] = [];
   isEditMode = false;
   isLoading = false;
   isSaving = false;
   consultationId?: number;
-  patients: Patient[] = [];
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -179,7 +190,7 @@ export class ConsultationFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadPatients();
+    this.setupPatientAutocomplete();
 
     const id = this.route.snapshot.params['id'];
     if (id) {
@@ -192,6 +203,34 @@ export class ConsultationFormComponent implements OnInit {
     if (patientId) {
       this.consultationForm.patchValue({ patientId: +patientId });
     }
+  }
+
+  setupPatientAutocomplete(): void {
+    this.patientService.getAll({ size: 20 }).subscribe({
+      next: (r) => this.filteredPatients = r.content || [],
+      error: () => this.notification.error('Impossible de charger la liste des patients')
+    });
+
+    this.patientSearchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(value => {
+        const query = typeof value === 'string' ? value : '';
+        return this.patientService.getAll({ search: query, size: 20 });
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe(r => {
+      this.filteredPatients = r.content || [];
+    });
+  }
+
+  displayPatient(patient: Patient | null): string {
+    return patient ? `${patient.prenom} ${patient.nom}` : '';
+  }
+
+  onPatientSelected(event: MatAutocompleteSelectedEvent): void {
+    const patient: Patient = event.option.value;
+    this.consultationForm.patchValue({ patientId: patient.id });
   }
 
   initForm(): void {
@@ -213,18 +252,17 @@ export class ConsultationFormComponent implements OnInit {
     });
   }
 
-  loadPatients(): void {
-    this.patientService.getAll({ size: 100 }).subscribe({
-      next: (r) => this.patients = r.content || [],
-      error: () => this.patients = []
-    });
-  }
-
   loadConsultation(id: number): void {
     this.isLoading = true;
     this.consultationService.getById(id).subscribe({
       next: (c) => {
         this.consultationForm.patchValue(c);
+        if (c.patientId) {
+          this.patientService.getById(c.patientId).subscribe({
+            next: (p) => this.patientSearchControl.setValue(p, { emitEvent: false }),
+            error: () => this.notification.error('Impossible de charger le patient associé')
+          });
+        }
         this.isLoading = false;
       },
       error: () => {
@@ -256,5 +294,10 @@ export class ConsultationFormComponent implements OnInit {
         }
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
