@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConsultationService } from '../consultation.service';
 import { PatientService } from '../../patients/patient.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { Patient, PagedResponse } from '../../../models/patient.model';
+import { Patient } from '../../../models/patient.model';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Subject, of } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil } from 'rxjs/operators';
@@ -212,13 +212,13 @@ export class ConsultationFormComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       switchMap(value => {
         const query = typeof value === 'string' ? value : '';
-        return this.patientService.getAll({ search: query, size: 20 }).pipe(
-          catchError(() => of<PagedResponse<Patient>>({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 }))
+        return this.patientService.search(query).pipe(
+          catchError(() => of<Patient[]>([]))
         );
       }),
       takeUntil(this.destroy$)
-    ).subscribe(r => {
-      this.filteredPatients = r.content || [];
+    ).subscribe(patients => {
+      this.filteredPatients = patients || [];
     });
   }
 
